@@ -1,0 +1,40 @@
+name: Update Version and Merge
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js (needed for the script)
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Update version number
+        id: update_version
+        run: |
+          file="wp-content/themes/georgetown/src/GeorgetownSite.php"
+          version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+          version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
+          IFS='.' read -r -a version_parts <<< "$version"
+          new_version="${version_parts[0]}.${version_parts[1]}.$((version_parts[2] + 1))"
+          sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add $file
+          git commit -m "Increment version to ${new_version}"
+          git push origin main
+
+      - name: Checkout develop branch
+        run: |
+          git checkout develop
+          git merge main
+          git push origin develop
