@@ -19,3 +19,4 @@ class GeorgetownSite extends Site
 //adding another comment after updating the github secrets and seeing if this will trigger and go pass the signin part
 //hotfix number three
 //hotfix number five
+//hotfix number six
