@@ -18,9 +18,6 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Print repository path for debugging
-        run: echo 'Repository path is ${{ github.repository }}'
-
       - name: Update version number
         id: update_version
         run: |
