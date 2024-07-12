@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+
       - name: Setup Node.js (needed for the script)
         uses: actions/setup-node@v2
         with:
@@ -33,21 +38,18 @@ jobs:
           git commit -m "Increment version to ${new_version}"
 
       - name: Push changes to main
-        env:
-          ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/${{ github.repository }}
-          git push origin main
+          git push git@github.com:${{ github.repository }}.git main
 
       - name: Checkout develop branch
         run: |
           git fetch origin
           git checkout develop
+
+      - name: Merge main into develop
+        run: |
           git merge origin/main
 
       - name: Push changes to develop
-        env:
-          ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/${{ github.repository }}
-          git push origin develop
+          git push git@github.com:${{ github.repository }}.git develop
