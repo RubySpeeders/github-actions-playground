@@ -18,11 +18,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 
-      - name: Debug SSH Agent
-        run: |
-          echo $SSH_AUTH_SOCK
-          ssh-add -l
-
       - name: Setup Node.js (needed for the script)
         uses: actions/setup-node@v2
         with:
