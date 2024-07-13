@@ -24,3 +24,4 @@ class GeorgetownSite extends Site
 //hotfix number eight
 //hotfix number nine
 //hotfix 10
+//hotfix 11. theme should now be 1.23.22
