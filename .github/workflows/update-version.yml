@@ -48,10 +48,11 @@ jobs:
         run: |
           git push git@github.com:${{ github.repository }}.git main
 
+      - name: Fetch all branches
+        run: git fetch origin
+
       - name: Checkout develop branch
-        run: |
-          git fetch origin
-          git checkout develop
+        run: git checkout develop
 
       - name: Merge main into develop
         run: |
