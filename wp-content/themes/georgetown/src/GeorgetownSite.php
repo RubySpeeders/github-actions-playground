@@ -23,3 +23,4 @@ class GeorgetownSite extends Site
 //hotfix number seven
 //hotfix number eight
 //hotfix number nine
+//hotfix 10
