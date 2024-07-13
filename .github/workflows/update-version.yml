@@ -51,8 +51,9 @@ jobs:
       - name: Fetch all branches
         run: git fetch origin
 
-      - name: Checkout develop branch
-        run: git checkout develop
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
 
       - name: Merge main into develop
         run: |
