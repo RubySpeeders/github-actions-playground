@@ -23,6 +23,14 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Check if commit is from GitHub Actions
+        id: check_commit
+        run: |
+          if [[ "$(git log -1 --pretty=format:'%s')" == *"[skip ci]"* ]]; then
+            echo "This commit was made by GitHub Actions. Exiting."
+            exit 0
+          fi
+
       - name: Update version number
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
@@ -34,7 +42,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add $file
-          git commit -m "Increment version to ${new_version}"
+          git commit -m "Increment version to ${new_version} [skip ci]"
 
       - name: Push changes to main
         run: |
