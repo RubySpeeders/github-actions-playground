@@ -5,8 +5,6 @@ on:
     branches:
       - main
 
-permissions: write-all
-
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -26,7 +24,6 @@ jobs:
           node-version: '14'
 
       - name: Update version number
-        id: update_version
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
           version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
