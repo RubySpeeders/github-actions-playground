@@ -26,3 +26,4 @@ class GeorgetownSite extends Site
 //hotfix 10
 //hotfix 11. theme should now be 1.23.22
 //hotfix 12 omg  stop the infinite loop
+//hotfix 13 has the rebase happened. i expect 1.23.77
