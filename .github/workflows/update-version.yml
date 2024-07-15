@@ -11,15 +11,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Check branch type
         id: check_branch
         run: |
-          echo "Branch: ${{ github.event.ref }}"
-          if [[ "${{ github.event.ref }}" == refs/heads/hotfix-* ]]; then
+          echo "Branch: ${{ github.ref }}"
+          if [[ "${{ github.ref }}" == refs/heads/hotfix-* ]]; then
             echo "{branch_type}={hotfix}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event.ref }}" == refs/heads/feature-* ]]; then
+          elif [[ "${{ github.ref }}" == refs/heads/feature-* ]]; then
             echo "{branch_type}={feature}" >> $GITHUB_OUTPUT
           else
             echo "{branch_type}={other}" >> $GITHUB_OUTPUT
