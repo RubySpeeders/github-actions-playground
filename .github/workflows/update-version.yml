@@ -1,30 +1,25 @@
 name: Update Version and Merge
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [closed]
 
 jobs:
   update-version:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check branch type
-        id: check_branch
+      - name: Get PR labels
+        id: get_labels
         run: |
-          echo "Branch ref_name: ${{ github.ref_name }}"
-          echo "Branch ref_name: ${{ github.event.label.name }}"
-          if [[ "${{ github.ref_name }}" == hotfix-* ]]; then
-            echo "{branch_type}={hotfix}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref_name }}" == feature-* ]]; then
-            echo "{branch_type}={feature}" >> $GITHUB_OUTPUT
-          else
-            echo "{branch_type}={other}" >> $GITHUB_OUTPUT
-          fi
+          pr_number=${{ github.event.pull_request.number }}
+          labels=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${pr_number}/labels" | jq -r '.[].name')
+          echo "labels=$labels" >> $GITHUB_ENV
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -36,16 +31,9 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Check if commit is from GitHub Actions
-        id: check_commit
-        run: |
-          if [[ "$(git log -1 --pretty=format:'%s')" == *"[skip ci]"* ]]; then
-            echo "This commit was made by GitHub Actions. Exiting."
-            exit 0
-          fi
-
-      - name: Update version number
-        id: update_version
+      - name: Update version number for hotfix
+        if: contains(env.labels, 'hotfix')
+        id: update_version_hotfix
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
           version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
@@ -56,7 +44,22 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add $file
-          git commit -m "Increment version to ${new_version} [skip ci]"
+          git commit -m "Increment version to ${new_version}"
+
+      - name: Update version number for feature
+        if: contains(env.labels, 'feature')
+        id: update_version_feature
+        run: |
+          file="wp-content/themes/georgetown/src/GeorgetownSite.php"
+          version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+          version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
+          IFS='.' read -r -a version_parts <<< "$version"
+          new_version="${version_parts[0]}.$((version_parts[1] + 1)).${version_parts[2]}"
+          sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add $file
+          git commit -m "Increment version to ${new_version}"
 
       - name: Push changes to main
         run: |
