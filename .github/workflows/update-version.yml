@@ -16,10 +16,10 @@ jobs:
       - name: Check branch type
         id: check_branch
         run: |
-          echo "Branch: ${{ github.ref }}"
-          if [[ "${{ github.ref }}" == refs/heads/hotfix-* ]]; then
+          echo "Branch: ${{ github.ref_name }}"
+          if [[ "${{ github.ref_name }}" == refs/heads/hotfix-* ]]; then
             echo "{branch_type}={hotfix}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/feature-* ]]; then
+          elif [[ "${{ github.ref_name }}" == refs/heads/feature-* ]]; then
             echo "{branch_type}={feature}" >> $GITHUB_OUTPUT
           else
             echo "{branch_type}={other}" >> $GITHUB_OUTPUT
