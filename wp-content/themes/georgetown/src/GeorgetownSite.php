@@ -29,3 +29,4 @@ class GeorgetownSite extends Site
 //hotfix 13 has the rebase happened. i expect 1.23.77
 //hotfix 14 merge to develop? i expect 1.23.78
 //hotfix 15 forgot to update develop from before i guess. i expect 1.23.79
+//hotfix 19. currently at 1.23.80. i expect to see 1.23.81
