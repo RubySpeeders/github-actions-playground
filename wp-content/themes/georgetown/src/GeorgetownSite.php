@@ -31,4 +31,4 @@ class GeorgetownSite extends Site
 //hotfix 15 forgot to update develop from before i guess. i expect 1.23.79
 //hotfix 22. currently at 1.23.80. i expect to see 1.23.81
 //hotfix 27 arbitray comment
-//feature add, comment. expecting version to be 1.24.25.
+//feature add, comment. expecting version to be 1.24.25. i forgot to add the feature label. duh.
