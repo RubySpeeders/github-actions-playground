@@ -18,11 +18,11 @@ jobs:
         run: |
           echo "Branch: ${{ github.event.ref }}"
           if [[ "${{ github.event.ref }}" == refs/heads/hotfix-* ]]; then
-            echo "::set-output name=branch_type::hotfix"
+            echo "{branch_type}={hotfix}" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event.ref }}" == refs/heads/feature-* ]]; then
-            echo "::set-output name=branch_type::feature"
+            echo "{branch_type}={feature}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=branch_type::other"
+            echo "{branch_type}={other}" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up SSH
@@ -31,7 +31,7 @@ jobs:
           ssh-private-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 
       - name: Setup Node.js (needed for the script)
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '14'
 
