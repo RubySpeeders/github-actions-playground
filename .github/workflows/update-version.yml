@@ -16,10 +16,10 @@ jobs:
       - name: Check branch type
         id: check_branch
         run: |
-          echo "Branch: ${{ github.ref }}"
-          if [[ "${{ github.ref }}" == refs/heads/hotfix-* ]]; then
+          echo "Branch: ${{ github.ref_name }}"
+          if [[ "${{ github.ref_name }}" == hotfix-* ]]; then
             echo "{branch_type}={hotfix}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/feature-* ]]; then
+          elif [[ "${{ github.ref_name }}" == feature-* ]]; then
             echo "{branch_type}={feature}" >> $GITHUB_OUTPUT
           else
             echo "{branch_type}={other}" >> $GITHUB_OUTPUT
@@ -36,7 +36,6 @@ jobs:
           node-version: '14'
 
       - name: Update version number
-        if: steps.check_branch.outputs.branch_type == 'hotfix'
         id: update_version
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
