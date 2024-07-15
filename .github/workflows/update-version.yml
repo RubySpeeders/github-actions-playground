@@ -7,12 +7,23 @@ on:
 
 jobs:
   update-version:
-    if: startsWith(github.ref, 'refs/heads/hotfix')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Check branch type
+        id: check_branch
+        run: |
+          echo "Branch: ${{ github.event.ref }}"
+          if [[ "${{ github.event.ref }}" == refs/heads/hotfix-* ]]; then
+            echo "::set-output name=branch_type::hotfix"
+          elif [[ "${{ github.event.ref }}" == refs/heads/feature-* ]]; then
+            echo "::set-output name=branch_type::feature"
+          else
+            echo "::set-output name=branch_type::other"
+          fi
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.4
@@ -24,15 +35,9 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Check if commit is from GitHub Actions
-        id: check_commit
-        run: |
-          if [[ "$(git log -1 --pretty=format:'%s')" == *"[skip ci]"* ]]; then
-            echo "This commit was made by GitHub Actions. Exiting."
-            exit 0
-          fi
-
       - name: Update version number
+        if: steps.check_branch.outputs.branch_type == 'hotfix'
+        id: update_version
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
           version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
@@ -43,7 +48,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add $file
-          git commit -m "Increment version to ${new_version} [skip ci]"
+          git commit -m "Increment version to ${new_version}"
 
       - name: Push changes to main
         run: |
