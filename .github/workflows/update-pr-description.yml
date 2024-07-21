@@ -12,7 +12,7 @@ jobs:
             - name: Update PR Description
               uses: nefrob/pr-description@v1.1.2
               with:
-                  content: "<!-- start match -->\nHello there!\n<!-- end match -->"
+                  content: "<!-- start match -->\nHello there! ${{ github.event.number }}\n<!-- end match -->"
                   regex: "<!-- start match -->.*?<!-- end match -->"
                   regexFlags: ims
                   token: ${{ secrets.GITHUB_TOKEN }}
