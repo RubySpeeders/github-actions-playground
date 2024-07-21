@@ -6,13 +6,24 @@ on:
 jobs:
     update-pr-description:
         runs-on: ubuntu-latest
+
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
+            - name: Extract branch name and ID
+              id: extract
+              run: |
+                BRANCH_NAME=${{ github.head_ref }}
+                echo "Branch name: $BRANCH_NAME"
+                TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$')
+                echo "Extracted Task ID: $TASK_ID"
+                echo "::set-output name=task_id::$TASK_ID"
+
             - name: Update PR Description
               uses: nefrob/pr-description@v1.1.2
               with:
-                  content: "<!-- start match -->\nHello there!\n<!-- end match -->"
+                  content: "<!-- start match -->\nhttps://www.wrike.com/open.htm?id=${{ steps.extract.outputs.task_id }} https://pr-${{ github.event.number }}-guoa-wordpress-multisite.pantheonsite.io\n<!-- end match -->"
                   regex: "<!-- start match -->.*?<!-- end match -->"
                   regexFlags: ims
                   token: ${{ secrets.GITHUB_TOKEN }}
