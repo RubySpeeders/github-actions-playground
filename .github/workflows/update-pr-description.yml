@@ -18,7 +18,7 @@ jobs:
                 echo "Branch name: $BRANCH_NAME"
                 TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$')
                 echo "Extracted Task ID: $TASK_ID"
-                echo "{task_id}={$TASK_ID}" >> $GITHUB_OUTPUT
+                echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
 
             - name: Update PR Description
               uses: nefrob/pr-description@v1.1.2
