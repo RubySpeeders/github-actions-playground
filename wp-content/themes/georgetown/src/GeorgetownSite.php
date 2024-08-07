@@ -8,7 +8,7 @@ use Timber\Menu;
  */
 class GeorgetownSite extends Site
 {
-  protected $theme_version = '2.0.0';
+  protected $theme_version = '2.01.0';
   public function get_theme_version()
   {
     return $this->theme_version;
