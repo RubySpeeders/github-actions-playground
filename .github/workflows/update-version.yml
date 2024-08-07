@@ -52,16 +52,17 @@ jobs:
         id: update_version_feature
         run: |
           file="wp-content/themes/georgetown/src/GeorgetownSite.php"
-          version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+          version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)            
           version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
           IFS='.' read -r -a version_parts <<< "$version"
-          new_version="${version_parts[0]}.$((version_parts[1] + 1)).${version_parts[2]}"
+          new_minor_version=$(printf "%02d" $((version_parts[1] + 1)))
+          new_version="${version_parts[0]}.${new_minor_version}.${version_parts[2]}"
           sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add $file
           git commit -m "Increment version to ${new_version}"
-
+        
       - name: Push changes to main
         run: |
           git push git@github.com:${{ github.repository }}.git main
