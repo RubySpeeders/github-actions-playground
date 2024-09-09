@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  update_version:
+    docker:
+      - image: node:10.15.3
+    steps:
+      - checkout
+      - run:
+          name: Update version in GeorgetownSite.php
+          command: |
+            file="GeorgetownSite.php"
+            version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+            version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
+            IFS='.' read -r -a version_parts <<< "$version"
+            new_patch_version=$(printf "%02d" $((version_parts[2] + 1)))
+            new_version="${version_parts[0]}.${version_parts[1]}.${new_patch_version}"
+            sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
+            git config --global user.name "circleci"
+            git config --global user.email "circleci@users.noreply.github.com"
+            git add $file
+            git commit -m "Increment version to ${new_version}"
+      - run:
+          name: Push changes to GitHub
+          command: |
+            git push git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git main
+
+workflows:
+  version: 2
+  update_file:
+    jobs:
+      - update_version
