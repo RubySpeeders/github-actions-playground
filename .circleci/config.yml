@@ -29,4 +29,8 @@ workflows:
   version: 2
   update_file:
     jobs:
-      - update_version
+      - update_version:
+          filters:
+            branches:
+              only:
+                - main
