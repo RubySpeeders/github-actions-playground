@@ -8,10 +8,8 @@ use Timber\Menu;
  */
 class GeorgetownSite extends Site
 {
-  //arbitrary comment here
-  //expect this to change to 2.02.0 for minor
-  //expect this to change to 2.01.01 for patch
-  protected $theme_version = '2.03.02';
+  //expect this to change to 2.05.04 in main AND develop
+  protected $theme_version = '2.04.03';
   public function get_theme_version()
   {
     return $this->theme_version;
