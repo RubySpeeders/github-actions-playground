@@ -12,7 +12,7 @@ jobs:
             file="GeorgetownSite.php"
             version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
             version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
-            IFS='.' read -r -a version_parts <<< "$version"
+            IFS='.' read -r -a version_parts \<< "$version"
             new_patch_version=$(printf "%02d" $((version_parts[2] + 1)))
             new_version="${version_parts[0]}.${version_parts[1]}.${new_patch_version}"
             sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
@@ -29,4 +29,8 @@ workflows:
   version: 2
   update_file:
     jobs:
-      - update_version
+      - update_version:
+          filters:
+            branches:
+              only:
+                - main
