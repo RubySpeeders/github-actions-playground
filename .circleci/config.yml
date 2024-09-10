@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Update version in GeorgetownSite.php
           command: |
-            file="GeorgetownSite.php"
+            file="wp-content/themes/georgetown/src/GeorgetownSite.php"
             version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
             version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
             IFS='.' read -r -a version_parts \<< "$version"
