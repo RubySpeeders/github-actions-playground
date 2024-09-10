@@ -7,19 +7,44 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update version in GeorgetownSite.php
+          name: Get PR labels
           command: |
-            file="wp-content/themes/georgetown/src/GeorgetownSite.php"
-            version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
-            version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
-            IFS='.' read -r -a version_parts \<< "$version"
-            new_patch_version=$(printf "%02d" $((version_parts[2] + 1)))
-            new_version="${version_parts[0]}.${version_parts[1]}.${new_patch_version}"
-            sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
-            git config --global user.name "circleci"
-            git config --global user.email "circleci@users.noreply.github.com"
-            git add $file
-            git commit -m "Increment version to ${new_version}"
+            pr_number=$(echo $CIRCLE_PULL_REQUEST | sed 's#.*/pull/##')
+            labels=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${pr_number}/labels" | jq -r '.[].name')
+            echo "export PR_LABELS=\"$labels\"" >> $BASH_ENV
+      - run:
+          name: Update version number for patches
+          command: |
+            if echo "$PR_LABELS" | grep -q 'patch'; then
+              file="wp-content/themes/georgetown/src/GeorgetownSite.php"
+              version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+              version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
+              IFS='.' read -r -a version_parts \<<< "$version"
+              new_patch_version=$(printf "%02d" $((version_parts[2] + 1)))
+              new_version="${version_parts[0]}.${version_parts[1]}.${new_patch_version}"
+              sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
+              git config --global user.name "circleci"
+              git config --global user.email "circleci@users.noreply.github.com"
+              git add $file
+              git commit -m "Increment version to ${new_version}"
+            fi
+      - run:
+          name: Update version number for minor
+          command: |
+            if echo "$PR_LABELS" | grep -q 'minor'; then
+              file="wp-content/themes/georgetown/src/GeorgetownSite.php"
+              version_line=$(grep -n "\$theme_version = '" $file | cut -d: -f1)
+              version=$(grep "\$theme_version = '" $file | sed -E "s/.*theme_version = '([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")
+              IFS='.' read -r -a version_parts \<<< "$version"
+              new_minor_version=$(printf "%02d" $((version_parts[1] + 1)))
+              new_version="${version_parts[0]}.${new_minor_version}.${version_parts[2]}"
+              sed -i "${version_line}s/.*/  protected \$theme_version = '${new_version}';/" $file
+              git config --global user.name "circleci"
+              git config --global user.email "circleci@users.noreply.github.com"
+              git add $file
+              git commit -m "Increment version to ${new_version} [skip ci]"
+            fi
       - run:
           name: Push changes to GitHub
           command: |
