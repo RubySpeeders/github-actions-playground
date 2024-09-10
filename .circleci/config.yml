@@ -14,7 +14,7 @@ jobs:
           name: Get PR labels
           command: |
             pr_number=$(echo $CIRCLE_PULL_REQUEST | sed 's#.*/pull/##')
-            labels=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            labels=$(curl -s -H "Authorization: token $GITHUB_TOKEN_CIRCLE_CI" \
               "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${pr_number}/labels" | jq -r '.[].name')
             echo "export PR_LABELS=\"$labels\"" >> $BASH_ENV
       - run:
