@@ -1,11 +1,15 @@
 version: 2.1
 
+orbs:
+  jq: circleci/jq@3.0.0
 jobs:
   update_version:
     docker:
       - image: node:10.15.3
     steps:
       - checkout
+      - jq/install:
+          version: jq-1.7
       - run:
           name: Get PR labels
           command: |
