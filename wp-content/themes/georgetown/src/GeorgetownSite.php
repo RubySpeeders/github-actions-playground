@@ -9,7 +9,7 @@ use Timber\Menu;
 class GeorgetownSite extends Site
 {
   //expect this to change to 2.05.04 in main AND develop
-  protected $theme_version = '2.05.04';
+  protected $theme_version = '2.05.05';
   public function get_theme_version()
   {
     return $this->theme_version;
