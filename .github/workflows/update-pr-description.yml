@@ -25,10 +25,10 @@ jobs:
               with:
                 content: |
                     ## Wrike Link
-                    https://www.wrike.com/open.htm?id=${{ steps.extract.outputs.task_id }}
+                    ${{ steps.extract.outputs.task_id && format('https://www.wrike.com/open.htm?id={0}', steps.extract.outputs.task_id) || '' }}
     
                     ## Multidev Link
-                    https://pr-${{ github.event.number }}-guoa-wordpress-multisite.pantheonsite.io                  
+                    https://pr-${{ github.event.number }}-guoa-wordpress-multisite.pantheonsite.io 
                 regex: "<!-- start match -->.*?<!-- end match -->"
                 regexFlags: ims
                 token: ${{ secrets.GITHUB_TOKEN }}
