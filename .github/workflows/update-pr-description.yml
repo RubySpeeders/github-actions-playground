@@ -16,8 +16,18 @@ jobs:
               run: |
                 BRANCH_NAME=${{ github.head_ref }}
                 echo "Branch name: $BRANCH_NAME"
-                TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$')
-                echo "Extracted Task ID: $TASK_ID"
+                
+                # Extract task ID if present
+                TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$' || echo "")
+                
+                # Check if TASK_ID is empty
+                if [ -z "$TASK_ID" ]; then
+                  echo "No Task ID found."
+                else
+                  echo "Extracted Task ID: $TASK_ID"
+                fi
+                
+                # Set the output
                 echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
 
             - name: Update PR Description
