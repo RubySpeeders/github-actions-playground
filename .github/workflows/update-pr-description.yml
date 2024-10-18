@@ -24,7 +24,7 @@ jobs:
               uses: nefrob/pr-description@v1.1.2
               with:
                 content: |
-                    ${{ steps.extract.outputs.task_id != '' && '## Wrike Link\nhttps://www.wrike.com/open.htm?id=${{ steps.extract.outputs.task_id }}' || '## Wrike Link\nhttps://www.wrike.com/open.htm?id=TASKID_GOES_HERE' }}
+                  ${{ steps.extract.outputs.task_id != '' && '## Wrike Link\nhttps://www.wrike.com/open.htm?id=${{ steps.extract.outputs.task_id }}\n' || '## Wrike Link\nhttps://www.wrike.com/open.htm?id=TASKID_GOES_HERE\n' }}
     
                     ## Multidev Link
                     https://pr-${{ github.event.number }}-guoa-wordpress-multisite.pantheonsite.io                    
