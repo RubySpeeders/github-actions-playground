@@ -17,16 +17,20 @@ jobs:
                 BRANCH_NAME=${{ github.head_ref }}
                 echo "Branch name: $BRANCH_NAME"
                 TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$')
-                echo "Extracted Task ID: $TASK_ID"
+                if [ -z "$TASK_ID" ]; then
+                  echo "Task ID not found, setting default"
+                  TASK_ID="TASKID_GOES_HERE"
+                else
+                  echo "Extracted Task ID: $TASK_ID"
+                fi
                 echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
 
             - name: Update PR Description
               uses: nefrob/pr-description@v1.1.2
               with:
                 content: |
-                    ## Wrike Link
-                    ${{ steps.extract.outputs.task_id && format('https://www.wrike.com/open.htm?id={0}', steps.extract.outputs.task_id) || 'TASKID_GOES_HERE' }}
-
+                    ## Wrike Link\nhttps://www.wrike.com/open.htm?id=${{ steps.extract.outputs.task_id }}
+    
                     ## Multidev Link
                     https://pr-${{ github.event.number }}-guoa-wordpress-multisite.pantheonsite.io                    
                 regex: "<!-- start match -->.*?<!-- end match -->"
