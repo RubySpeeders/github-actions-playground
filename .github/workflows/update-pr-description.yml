@@ -16,7 +16,7 @@ jobs:
               run: |
                 BRANCH_NAME=${{ github.head_ref }}
                 echo "Branch name: $BRANCH_NAME"
-                TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$')
+                TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$' || echo "")
                 if [ -z "$TASK_ID" ]; then
                   echo "Task ID not found, setting default"
                   TASK_ID="TASKID_GOES_HERE"
