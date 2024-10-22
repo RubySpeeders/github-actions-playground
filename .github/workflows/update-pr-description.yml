@@ -19,7 +19,7 @@ jobs:
                 TASK_ID=$(echo $BRANCH_NAME | grep -oP '(?<=-)\d+$' || echo "")
                 if [ -z "$TASK_ID" ]; then
                   echo "Task ID not found, setting default"
-                  task_id="TASKID_GOES_HERE"
+                  echo "task_id='TASKID_GOES_HERE'" >> $GITHUB_OUTPUT
                 else
                   echo "Extracted Task ID: $TASK_ID"
                   echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
